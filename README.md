@@ -19,7 +19,7 @@ A python application which performs image segmentation of the [Weizmann Horse Da
   python -W ignore imagesegmentation.py
   ```
 
-3. Update the horseModelLogger variable with the generated model file. Run the demo application to visualize.   
+3. Update the horseModelLogger variable with the generated model file. Run the demo application to visualize segmentation.   
   
   ```  
   python -W ignore imagesegmentationDemo.py WeizmannSingleScale/horses/training/images/image-xxx.png
