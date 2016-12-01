@@ -28,6 +28,7 @@ def measurePerformance( basedir = 'WeizmannSingleScale/horses/training/images/',
     precision = 0.0
     recall = 0.0
     f1 = 0.0
+    s0 = 0.0
     n = 0
     
     print '*****************************************************************************'
@@ -39,13 +40,14 @@ def measurePerformance( basedir = 'WeizmannSingleScale/horses/training/images/',
         for imageFilename in filenames :
             print '---------------------------------------------------------------------------------------------'
             print imageFilename
-            pixelwise_accuracy, pixelwise_precision, pixelwise_recall, pixelwise_f1 =  \
+            pixelwise_accuracy, pixelwise_precision, pixelwise_recall, pixelwise_f1, pixelwise_s0 =  \
                 imagesegmentationDemo.showSegmentation(basedir + imageFilename, labeldir + imageFilename.replace('image', 'mask'), visualizeSegmentation=False)
             
             accuracy += pixelwise_accuracy
             precision += pixelwise_precision
             recall += pixelwise_recall
             f1 += pixelwise_f1
+            s0 += pixelwise_s0
             n += 1
             #break
         
@@ -54,6 +56,7 @@ def measurePerformance( basedir = 'WeizmannSingleScale/horses/training/images/',
     print 'Average Pixelwise Precision: ' + str(precision / n)
     print 'Average Pixelwise Recall: '+ str(recall / n)
     print 'Average Pixelwise F1: ' + str(f1 / n) 
+    print 'Average Pixelwise S0: ' + str(s0 / n) 
     print '***************************************************'
 
 # Main entry of program

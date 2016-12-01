@@ -38,6 +38,30 @@ horsePixelClasses = [ numpy.array([ 0.,  0.,  0.]), numpy.array([ 1.,  1.,  1.])
 horseModelLogger = SaveLogger('save/imagesegmentation-horse-hog_96_lbp.model', save_every=1)
 horseCRF = horseModelLogger.load()
 
+######################################
+# Compute S_0 score
+######################################
+def foregroundQualityScore(a , b) :
+    TP = TN = FP = FN = 0.0
+    
+    for i in range(0, len(a)) :
+        if a[i] == b[i] :
+            if a[i] == 0 :
+                TN += 1
+            else :
+                TP += 1
+        else :
+            if a[i] == 0 :
+                FP += 1
+            else :
+                FN += 1
+    
+    #print 'accuracy:' + str(((TP+TN) / (TP+FP+FN+TN)))
+    #print 'precision:' + str((TP / (TP+FP)))
+    #print 'recall:' + str((TP / (TP+FN)))
+    #print 'so:' + str(TP / (TP+FP+FN))
+    
+    return (TP / (TP+FP+FN))
 # 
 def showSegmentation(rgbfile, labelfile, pixelClasses = horsePixelClasses, crfmodel = horseCRF, visualizeSegmentation=True) :
     start_time = time.time()
@@ -167,6 +191,7 @@ def showSegmentation(rgbfile, labelfile, pixelClasses = horsePixelClasses, crfmo
         pixelwise_precision = precision_score(labelImage.flatten().flatten(), labeledPrediction.flatten().flatten())
         pixelwise_recall = recall_score(labelImage.flatten().flatten(), labeledPrediction.flatten().flatten())
         pixelwise_f1 = f1_score(labelImage.flatten().flatten(), labeledPrediction.flatten().flatten()) 
+        pixelwise_so = foregroundQualityScore(labelImage.flatten().flatten(), labeledPrediction.flatten().flatten())
         
         # comment on f1 score
         if pixelwise_f1 >= 0.9 :
@@ -185,6 +210,7 @@ def showSegmentation(rgbfile, labelfile, pixelClasses = horsePixelClasses, crfmo
         print 'Pixelwise Precision: ' + str( pixelwise_precision )
         print 'Pixelwise Recall: ' + str( pixelwise_recall )
         print 'Pixelwise F1: ' + str( pixelwise_f1 ) + comment
+        print 'Pixelwise S0: ' + str( pixelwise_so )
     else :
         'There is no label image hence no performance stats...'
 
@@ -218,13 +244,13 @@ def showSegmentation(rgbfile, labelfile, pixelClasses = horsePixelClasses, crfmo
         plt.show()
         
     # Save result
-    skimageIO.imsave('slic-' + ntpath.basename(rgbfile) , rgb_segments)
-    skimageIO.imsave('slicground-' + ntpath.basename(rgbfile) , label_segments)
-    skimageIO.imsave('result-' + ntpath.basename(rgbfile) , labeledPredictionRGB)
+    #skimageIO.imsave('slic-' + ntpath.basename(rgbfile) , rgb_segments)
+    #skimageIO.imsave('slicground-' + ntpath.basename(rgbfile) , label_segments)
+    #skimageIO.imsave('result-' + ntpath.basename(rgbfile) , labeledPredictionRGB)
     
     # Return metrics
     if labelfile is not None :
-        return pixelwise_accuracy, pixelwise_precision, pixelwise_recall, pixelwise_f1
+        return pixelwise_accuracy, pixelwise_precision, pixelwise_recall, pixelwise_f1, pixelwise_so
     else :
         return
 
